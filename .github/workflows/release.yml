@@ -1,0 +1,53 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - '[0-9]{8}-P[0-9]{2}'
+  release:
+    types:
+      - published
+
+jobs:
+  # deploy-chromatic:
+  #   name: Deployment to Chromatic
+  #   runs-on: ${{ matrix.os }}
+  #   strategy:
+  #     matrix:
+  #       node: ['18.x']
+  #       os: [ubuntu-latest]
+  #   steps:
+  #     - name: Checkout repo
+  #       uses: actions/checkout@v2
+
+  #     - name: Use Node ${{ matrix.node }}
+  #       uses: actions/setup-node@v2
+  #       with:
+  #         node-version: ${{ matrix.node }}
+
+  #     - name: Deploy to Chromatic
+  #       run: npx chromatic --project-token=${{ secrets.CHROMATIC_PROJECT_TOKEN }}
+
+  publish-gpr:
+    name: Deployment to npm
+
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        node: ['18.x']
+        os: [ubuntu-latest]
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v2
+
+      - name: Use Node ${{ matrix.node }}
+        uses: actions/setup-node@v2
+        with:
+          node-version: ${{ matrix.node }}
+          registry-url: https://registry.npmjs.org
+
+      - name: Publish package to NPM 📦
+        run: npm publish --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
