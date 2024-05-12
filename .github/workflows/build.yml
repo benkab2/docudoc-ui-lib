@@ -1,0 +1,99 @@
+name: Build preparation
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    name: Preparing build
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        node: ['18.x']
+        os: [ubuntu-latest]
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Get node version
+        id: node
+        run: |
+          echo "::set-output name=version::$(node -v)"
+
+      - name: Get node_modules cache
+        uses: actions/cache@v3.0.2
+        id: node_modules
+        with:
+          path: |
+            **/node_modules
+          key: ${{ runner.os }}-node_modules-${{ hashFiles('**/package-lock.json') }}-${{ steps.node.outputs.version }}
+
+      - name: Remove existing dist directory
+        run: rm -rf dist/
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build project
+        run: npm run build
+
+      - name: Generate version with timestamp
+        id: version
+        run: echo "v$(date +'%Y%m%d%H%M%S')" >> dist/version.txt
+
+      - name: Configure Git
+        run: |
+          git config --global user.email "ben10kabona@gmail.com"
+          git config --global user.name "Beni Kabona"
+
+      - name: Commit and push changes
+        run: |
+          git add dist/ -f
+          git commit -m "Deploy dist folder"
+          git push origin main
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  # create-release-tag:
+  #   name: Create Release Tag
+  #   needs: build
+  #   runs-on: ubuntu-latest
+
+  #   steps:
+  #     - name: Get tag name
+  #       id: get_tag_name
+  #       run: |
+  #         tag_name=$(git describe --tags --abbrev=0)
+  #         if [ -z "$tag_name" ]; then
+  #           echo "::error::No tags found in the repository."
+  #           exit 1
+  #         fi
+  #         echo "::set-output name=tag_name::$tag_name"
+
+  #     - name: Extract date and deployment number from tag name
+  #       id: extract_tag_info
+  #       run: |
+  #         tag_name=${{ steps.get_tag_name.outputs.tag_name }}
+  #         date=$(echo "$tag_name" | cut -d'_' -f2)
+  #         deployment_number=$(echo "$tag_name" | cut -d'_' -f3)
+  #         echo "::set-output name=date::${date}"
+  #         echo "::set-output name=deployment_number::${deployment_number}"
+
+  #     - name: Create Release
+  #       id: create_release
+  #       uses: actions/create-release@v1
+  #       env:
+  #         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  #       with:
+  #         tag_name: ${{ steps.get_tag_name.outputs.tag_name }}
+  #         release_name: ${{ steps.extract_tag_info.outputs.date }}-D${{ steps.extract_tag_info.outputs.deployment_number }}
+  #         body: |
+  #           This is an automatically generated release.
+  #         draft: false
+  #         prerelease: true
