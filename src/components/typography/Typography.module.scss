@@ -1,0 +1,14 @@
+.typography {
+  font-family: 'Inter', sans-serif !important;
+  font-size: var(--text-md);
+  line-height: var(--line-height-md);
+  font-weight: var(--font-medium);
+  color: var(--color-base-primary);
+  margin: 0;
+  padding: 0;
+  letter-spacing: 5%;
+
+  &--uppercase {
+    text-transform: uppercase;
+  }
+}

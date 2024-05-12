@@ -1,0 +1,122 @@
+@import '../../sass/__vars.scss';
+
+.section {
+  display: flex;
+  justify-content: space-around;
+  flex-wrap: wrap;
+
+  @include tablets {
+    flex-direction: column;
+  }
+
+  &--left {
+    justify-content: flex-start;
+  }
+
+  &--right {
+    justify-content: center;
+  }
+
+  &--center {
+    justify-content: flex-end;
+  }
+}
+
+.column {
+  max-width: 100%;
+  margin: 0 var(--spacing-sm);
+  margin-bottom: var(--spacing-md);
+  display: flex;
+  flex: 12;
+  flex-direction: column;
+
+  &--no-margin-left {
+    margin-left: 0;
+  }
+
+  &--no-margin-right {
+    margin-right: 0;
+  }
+
+  &--no-margin {
+    margin: 0 0 var(--spacing-md) 0;
+  }
+
+  &--1 {
+    flex: 1;
+  }
+
+  &--2 {
+    flex: 2;
+  }
+
+  &--3 {
+    flex: 3;
+  }
+
+  &--4 {
+    flex: 4;
+  }
+
+  &--5 {
+    flex: 5;
+  }
+
+  &--6 {
+    flex: 6;
+  }
+
+  &--7 {
+    flex: 7;
+  }
+
+  &--8 {
+    flex: 8;
+  }
+
+  &--9 {
+    flex: 9;
+  }
+
+  &--10 {
+    flex: 10;
+  }
+
+  &--11 {
+    flex: 11;
+  }
+
+  &--12 {
+    flex: 12;
+  }
+
+  @include tablets {
+    max-width: 100% !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
+}
+
+.container {
+  margin: 0 auto;
+
+  @include large-desktops {
+    width: 1224px;
+  }
+
+  @include small-desktops {
+    width: 990px;
+  }
+
+  @include tablets {
+    width: calc(100vw - 128px);
+  }
+
+  @include large-phones {
+    width: calc(100vw - 48px);
+  }
+
+  @include small-phones {
+    width: calc(100vw - 40px);
+  }
+}
